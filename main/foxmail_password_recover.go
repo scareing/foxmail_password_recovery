@@ -1,30 +1,38 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"foxmail_password_recover/decrypt"
-	"foxmail_password_recover/io"
-	"foxmail_password_recover/registry"
-	"io/ioutil"
-	"os"
-	"path/filepath"
+"foxmail_password_recover/decrypt"
+"foxmail_password_recover/io"
+"foxmail_password_recover/registry"
+"io/ioutil"
+"os"
+"path/filepath"
 )
 
-func main() {
-	loadAll()
+var filename string
 
+func main() {
+	flag.StringVar(&filename,"path","","set file path")
+	flag.Parse()
+	loadAll(filename)
 	fmt.Println("Press Enter to exit...")
 	_, _ = fmt.Scanln()
 }
 
-func loadAll() {
-	location := registry.GetStorageLocation()
-	dir := filepath.Dir(location)
+func loadAll(path string) {
+	if path!=""{
+		loadAllSingleFile(filename)
+	}else {
+		location := registry.GetStorageLocation()
+		dir := filepath.Dir(location)
 
-	base := filepath.Join(dir, "Storage")
-	accounts, _ := ioutil.ReadDir(base)
-	for _, account := range accounts {
-		solveFromAccountDir(base, account)
+		base := filepath.Join(dir, "Storage")
+		accounts, _ := ioutil.ReadDir(base)
+		for _, account := range accounts {
+			solveFromAccountDir(base, account)
+		}	
 	}
 }
 
